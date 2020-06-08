@@ -17,7 +17,7 @@ use Laminas\Diactoros\ResponseFactory;
 use League\Route\RouteGroup;
 use League\Route\Strategy\JsonStrategy;
 
-class PressPackage implements RegistrationInterface, RouterConfigInterface, EntityRegistrationInterface
+class PressPackage implements RegistrationInterface, RouterConfigInterface
 {
     /**
      * @param Container $c
@@ -44,25 +44,18 @@ class PressPackage implements RegistrationInterface, RouterConfigInterface, Enti
      */
     public function addRoutes(Container $c, Router $router): Router
     {
-        $router->map('GET', '/press', [PressController::class, 'indexAction']);
+        $router->map('GET', '/cms', [PressController::class, 'indexAction']);
 
         $factory = new ResponseFactory();
         $strategy = new JsonStrategy($factory);
         $strategy->setContainer($c);
 
         $router->group('/api', function (RouteGroup $route) {
-            $route->map('GET', '/press', [PressApiController::class, 'indexAction']);
+            $route->map('GET', '/cms', [PressApiController::class, 'indexAction']);
         })
         ->setStrategy($strategy);
 
         return $router;
     }
-
-    /**
-     * @return string
-     */
-    public function getEntityPath(): string
-    {
-        return __DIR__ . '/Entity';
-    }
 }
+

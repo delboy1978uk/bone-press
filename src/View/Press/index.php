@@ -1,7 +1,20 @@
 <?php
 use Del\Icon;
 ?>
-<h1>Press</h1>
-<p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci commodi consectetur consequuntur, 
-delectus modi nulla praesentium vel voluptatum. Ad aperiam debitis in officia placeat porro quae quaerat similique 
-velit voluptates.</p>
+<section class="intro">
+    <div class="pt50">
+        <div class="container">
+            <div class="spacer"></div>
+            <?= isset($message) ? $this->alert($message) : null ?>
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Blog Posts</h1>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="spacer"></div>
+<div class="spacer"></div>
+
