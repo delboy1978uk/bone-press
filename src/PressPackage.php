@@ -13,27 +13,33 @@ use Bone\Press\Controller\PressController;
 use Bone\Router\Router;
 use Bone\Router\RouterConfigInterface;
 use Bone\View\ViewEngine;
+use Del\Press\Cms;
+use Doctrine\ORM\EntityManager;
 use Laminas\Diactoros\ResponseFactory;
 use League\Route\RouteGroup;
 use League\Route\Strategy\JsonStrategy;
 
-class PressPackage implements RegistrationInterface, RouterConfigInterface
+class PressPackage implements RegistrationInterface, RouterConfigInterface, EntityRegistrationInterface
 {
     /**
      * @param Container $c
      */
     public function addToContainer(Container $c)
     {
+        $c[Cms::class] = $c->factory(function (Container $c) {
+            $entityManager = $c->get(EntityManager::class);
+
+            return new Cms($entityManager);
+        });
+
         /** @var ViewEngine $viewEngine */
         $viewEngine = $c->get(ViewEngine::class);
         $viewEngine->addFolder('press', __DIR__ . '/View/Press/');
 
         $c[PressController::class] = $c->factory(function (Container $c) {
-            return Init::controller(new PressController(), $c);
-        });
+            $cms = $c->get(Cms::class);
 
-        $c[PressApiController::class] = $c->factory(function (Container $c) {
-            return new PressApiController();
+            return Init::controller(new PressController($cms), $c);
         });
     }
 
@@ -45,17 +51,21 @@ class PressPackage implements RegistrationInterface, RouterConfigInterface
     public function addRoutes(Container $c, Router $router): Router
     {
         $router->map('GET', '/cms', [PressController::class, 'indexAction']);
-
-        $factory = new ResponseFactory();
-        $strategy = new JsonStrategy($factory);
-        $strategy->setContainer($c);
-
-        $router->group('/api', function (RouteGroup $route) {
-            $route->map('GET', '/cms', [PressApiController::class, 'indexAction']);
-        })
-        ->setStrategy($strategy);
+        $router->map('GET', '/cms/new-post', [PressController::class, 'addPostAction']);
+        $router->map('GET', '/cms/edit-post/{id:number}', [PressController::class, 'editPostAction']);
+        $router->map('POST', '/cms/edit-post/{id:number}', [PressController::class, 'handleEditPostAction']);
+        $router->map('GET', '/cms/delete-post/{id:number}', [PressController::class, 'deletePostAction']);
+        $router->map('POST', '/cms/delete-post/{id:number}', [PressController::class, 'deletePostAction']);
+        $router->map('GET', '/posts/{slug}', [PressController::class, 'viewPostAction']);
 
         return $router;
     }
+
+    function getEntityPath(): string
+    {
+        return __DIR__ . '/../../press/src/';
+    }
+
+
 }
 
