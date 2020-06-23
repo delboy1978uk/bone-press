@@ -12,6 +12,7 @@ use Bone\Press\Controller\PressApiController;
 use Bone\Press\Controller\PressController;
 use Bone\Router\Router;
 use Bone\Router\RouterConfigInterface;
+use Bone\User\Http\Middleware\SessionAuth;
 use Bone\View\ViewEngine;
 use Del\Press\Cms;
 use Doctrine\ORM\EntityManager;
@@ -41,6 +42,12 @@ class PressPackage implements RegistrationInterface, RouterConfigInterface, Enti
 
             return Init::controller(new PressController($cms), $c);
         });
+
+        $c[PressApiController::class] = $c->factory(function (Container $c) {
+            $cms = $c->get(Cms::class);
+
+            return Init::controller(new PressApiController($cms), $c);
+        });
     }
 
     /**
@@ -57,6 +64,15 @@ class PressPackage implements RegistrationInterface, RouterConfigInterface, Enti
         $router->map('GET', '/cms/delete-post/{id:number}', [PressController::class, 'deletePostAction']);
         $router->map('POST', '/cms/delete-post/{id:number}', [PressController::class, 'deletePostAction']);
         $router->map('GET', '/posts/{slug}', [PressController::class, 'viewPostAction']);
+
+        $factory = new ResponseFactory();
+        $strategy = new JsonStrategy($factory);
+        $strategy->setContainer($c);
+
+        $router->group('/api', function (RouteGroup $route) use ($c) {
+            $route->map('GET', '/cms/get-block-types', [PressApiController::class, 'getBlockTypesAction'])
+            ->middleware($c->get(SessionAuth::class));
+        })->setStrategy($strategy);
 
         return $router;
     }

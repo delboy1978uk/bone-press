@@ -17,6 +17,7 @@ class PageForm extends AbstractForm
 
         $title = new Text('title');
         $title->setLabel('Title');
+        $title->setId('title');
         $slug = new Text('slug');
         $slug->setLabel('URL slug');
         $published = new CheckBox('published');
