@@ -32,6 +32,12 @@ use Del\Icon;
                         <?php } ?>
                     </div>
                     <div id="controls">
+                        <select id="blockType" class="form-control" name="" id="">
+                            <?php foreach ($blockTypes as $blockType => $label) { ?>
+                                <option value="<?= $blockType ?>"><?= $label ?></option>
+                            <?php } ?>
+                        </select>
+                        &nbsp;
                         <button id="add-new-block" class="btn btn-primary">
                             <?= Icon::ADD ;?> Add new block
                         </button>
@@ -48,16 +54,33 @@ use Del\Icon;
 
         var blockTypes = null;
 
-        $('#add-new-block').click(function(){
-            if (blockTypes === null) {
-                $.get('/api/cms/get-block-types', function(e) {
-                    foreach (e as key => index) {
-                        console.log('key is' + key + ' and index is ' + index);
-                    }
-                });
+        function addBlock(html)
+        {
+            if (hasBlocks()) {
+                $('.blocks').append(html);
             } else {
-                console.log(blockTypes);
+                $('.blocks').html(html);
             }
+        }
+
+        function hasBlocks()
+        {
+            let noBlocksDiv = $('.no-blocks-found');
+
+            if (noBlocksDiv.length) {
+                return false;
+            }
+
+            return true;
+        }
+
+        $('#add-new-block').click(function(){
+            let value = $('#blockType').val();
+            let postId = <?= $postId ?>;
+            $.post('/api/cms/add-block/' + postId, {class: value}, function( data ) {
+                let html = data.html;
+                addBlock(html);
+            });
         });
 
         $('#title').on('keyup', function(){

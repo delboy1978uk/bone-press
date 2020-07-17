@@ -104,9 +104,13 @@ class PressController extends Controller implements SessionAwareInterface
         $published = $page->isPublished() ? 1: 0;
         $form->getField('published')->setValue($published);
 
+        $blockTypes = $this->cms->getBlockTypes();
+
         $body = $this->view->render('press::edit', [
             'form' => $form->render(),
             'page' => $page,
+            'blockTypes' => $blockTypes,
+            'postId' => $id,
         ]);
 
         return new HtmlResponse($body);

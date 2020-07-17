@@ -70,7 +70,7 @@ class PressPackage implements RegistrationInterface, RouterConfigInterface, Enti
         $strategy->setContainer($c);
 
         $router->group('/api', function (RouteGroup $route) use ($c) {
-            $route->map('GET', '/cms/get-block-types', [PressApiController::class, 'getBlockTypesAction'])
+            $route->map('POST', '/cms/add-block/{id:number}', [PressApiController::class, 'addBlockAction'])
             ->middleware($c->get(SessionAuth::class));
         })->setStrategy($strategy);
 
