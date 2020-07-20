@@ -22,9 +22,11 @@ use Del\Icon;
                         if (count($blocks)) {
                             /** @var Del\Press\Block\BlockInterface $block */
                             foreach ($blocks as $block) {
-                                echo '<div class="panel panel-primary">
+                                echo '<div class="panel panel-primary page-block">
                                       <div class="panel-heading">
-                                          <button type="button" class="close tt" title="Delete ' . $block->getBlockType() . '" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                          <button type="button" class="close tt" title="Delete ' . $block->getBlockType() . '" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">' . Icon::REMOVE . '</span></button>
+                                          <button type="button" class="sort movedown tt" title="Move down" aria-label="Move down"><span aria-hidden="true">' . Icon::ARROW_DOWN . '</span></button>
+                                          <button type="button" class="sort moveup tt" title="Move up" aria-label="Move up"><span aria-hidden="true">' . Icon::ARROW_UP . '</span></button>
                                           <h3 class="panel-title">' . $block->getBlockType() . '</h3>
                                       </div>
                                       <div class="panel-body">';
@@ -79,6 +81,14 @@ use Del\Icon;
             return true;
         }
 
+        function updateBlocks()
+        {
+            $('button.moveup').css('display', 'block');
+            $('button.movedown').css('display', 'block');
+            $('button.moveup').first().css('display', 'none');
+            $('button.movedown').last().css('display', 'none');
+        }
+
         $('#add-new-block').click(function(){
             let value = $('#blockType').val();
             let postId = <?= $postId ?>;
@@ -92,5 +102,7 @@ use Del\Icon;
             let text = $('#title').val();
             $('#blog-title').html(text);
         });
+
+        updateBlocks();
     });
 </script>

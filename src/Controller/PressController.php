@@ -171,8 +171,10 @@ class PressController extends Controller implements SessionAwareInterface
             throw new Exception('Page not found', 404);
         }
 
+        $blocks = $this->cms->getBlockRenderers($page);
         $body = $this->view->render('press::view', [
             'post' => $page,
+            'blocks' => $blocks,
         ]);
 
         return new HtmlResponse($body);

@@ -9,7 +9,11 @@ use Del\Icon;
             <div class="row">
                 <div class="col-md-12">
                     <h1><?= $post->getTitle() ;?></h1>
-
+                    <?php
+                    /** @var \Del\Press\Block\BlockInterface $block */
+                    foreach ($blocks as $block) {
+                        echo $block->render();
+                    } ?>
                 </div>
             </div>
         </div>
